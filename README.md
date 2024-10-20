@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ##### Preparing Training and Validation Data
 The dataset used for training and validation is prepared from a synthetic dataset available in Kaggle. The `dataset_preparation.py` script processes the dataset to extract and resize images, and generate label annotations for the needle tip and dial center coordinates.
 
-1. Download the Kaggle synthetic dataset  and place it in the appropriate directory.
+1. Download the [`Kaggle synthetic data for precision gauge reading dataset`](https://www.kaggle.com/datasets/endava/synthetic-data-for-precision-gauge-reading/data) and place it in the appropriate directory.
 2. Run the `dataset_preparation.py` script to prepare the training and validation data:
 ```python
 python python dataset_preparation.py
@@ -68,3 +68,50 @@ This script will:
 + Define and train a neural network model using a pre-trained ResNet18 backbone.
 + Train the model and save the trained model to the specified output directory.
 
+
+### Inference <a name="infer_model"></a>
+
+##### Inference on Videos
+To infer on unseen test videos using the trained model, use the `infer.py` script.
+
+1. Ensure the trained model is available.
+2. Run the `infer.py` script to perform inference on a video:
+
+```python
+python infer.py --input_video <path_to_input_video> --model_path <path_to_trained_model> --output_dir <path_to_save_output_frames>
+```
+
+##### Example usage
+```python
+python infer.py --input_video ../data/test_video.mp4 --model_path ../models/gauge_model.pth --output_dir ../output_frames
+```
+
+This script will:
++ Load the trained model.
++ Process each frame of the input video to predict the needle tip and dial center coordinates.
++ Save the processed frames with overlayed predictions to the specified output directory.
+
+
+##### Inference on Images
+To infer on unseen test images using the trained model, use the `infer_image.py` script.
+
+1. Ensure the trained model is available.
+2. Run the `infer_image.py` script to perform inference on an image:
+
+```python
+python infer_image.py --input_image <path_to_input_image> --model_path <path_to_trained_model> --output_dir <path_to_save_output_image>
+``` 
+
+##### Example usage
+```python
+python infer_image.py --input_image ../data/test_image.png --model_path ../models/gauge_model.pth --output_dir ../output_images
+```
+
+This script will:   
++ Load the trained model.
++ Process the input image to predict the needle tip and dial center coordinates.
++ Save the processed image with overlayed predictions to the specified output directory.
+
+
+### Conclusion <a name="conclusion"></a>
+This repository provides a comprehensive workflow for detecting needle tip and dial center coordinates in pressure gauges using deep learning. The steps include data preparation, model training, and inference on both images and videos. The trained model can be used to detect needle vibrations in pressure gauge images and videos, which can be useful for monitoring and analyzing pressure variations in industrial applications. For any questions or issues, please open an issue in the repository.
