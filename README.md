@@ -26,11 +26,11 @@ python python dataset_preparation.py
 ```
 
 This script will:
-	+ Load the JSON annotations from the Kaggle dataset.
-	+ Extract bounding boxes and keypoints for needle tip and dial center.
-	+ Resize the cropped images to 128x128 pixels.
-	+ Adjust the keypoints to the resized images.
-	+ Save the resized images and corresponding labels in the specified output directories and .csv files.
++ Load the JSON annotations from the Kaggle dataset.
++ Extract bounding boxes and keypoints for needle tip and dial center.
++ Resize the cropped images to 128x128 pixels.
++ Adjust the keypoints to the resized images.
++ Save the resized images and corresponding labels in the specified output directories and .csv files.
 
 ##### Example usage
 ```python
@@ -64,7 +64,7 @@ python train.py --train_images ../input_data/train --train_labels ../input_data/
 
 This script will:
 
-	+ Load the training and validation datasets.
-	+ Define and train a neural network model using a pre-trained ResNet18 backbone.
-	+ Train the model and save the trained model to the specified output directory.
++ Load the training and validation datasets.
++ Define and train a neural network model using a pre-trained ResNet18 backbone.
++ Train the model and save the trained model to the specified output directory.
 
