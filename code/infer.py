@@ -51,6 +51,7 @@ def process_frame(frame, model, device, transform):
 
     Returns:
         np.ndarray: Frame with predicted coordinates overlaid.
+        tuple: Predicted needle tip coordinates.
     """
     # Get the original frame dimensions
     original_height, original_width = frame.shape[:2]
@@ -65,19 +66,6 @@ def process_frame(frame, model, device, transform):
     # Extract coordinates
     needle_tip = (int(output[0]), int(output[1]))
     dial_center = (int(output[2]), int(output[3]))
-
-    # Print the predicted coordinates
-    print(f"Needle Tip: {needle_tip}, Dial Center: {dial_center}")
-
-    # # Convert transformed frame back to numpy array for overlay
-    # transformed_frame_np = transformed_frame.squeeze(0).permute(2, 1, 0).cpu().numpy()
-    # transformed_frame_np = (transformed_frame_np * 255).astype(np.uint8)
-
-    # # Overlay coordinates on the transformed frame
-    # cv2.circle(transformed_frame_np, needle_tip, 2, (0, 0, 255), -1)  # Red for needle tip
-    # cv2.circle(transformed_frame_np, dial_center, 2, (0, 255, 0), -1)  # Green for dial center
-
-    # return transformed_frame_np
 
     # Calculate scaling factors
     scale_x = original_width / 128
@@ -94,7 +82,7 @@ def process_frame(frame, model, device, transform):
     cv2.circle(frame, needle_tip, 5, (0, 0, 255), -1)  # Red for needle tip
     cv2.circle(frame, dial_center, 5, (0, 255, 0), -1)  # Green for dial center
 
-    return frame
+    return frame, needle_tip
 
 def main(args):
     # Define transformations
@@ -120,25 +108,44 @@ def main(args):
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
+    # Create the locus directory if it doesn't exist
+    locus_dir = os.path.join(args.output_dir, 'locus')
+    if not os.path.exists(locus_dir):
+        os.makedirs(locus_dir)
+
     frame_count = 0
+    needle_tip_locus = []
+
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
 
         # Process the frame
-        processed_frame = process_frame(frame, model, device, transform)
+        processed_frame, needle_tip = process_frame(frame, model, device, transform)
+        needle_tip_locus.append(needle_tip)
 
         # Save the processed frame
         output_path = os.path.join(args.output_dir, f"frame_{frame_count:04d}.png")
         cv2.imwrite(output_path, processed_frame)
         frame_count += 1
 
+    # Overlay the locus on the initial frame
+    if needle_tip_locus:
+        initial_frame = cv2.imread(os.path.join(args.output_dir, "frame_0000.png"))
+        for point in needle_tip_locus:
+            cv2.circle(initial_frame, point, 2, (255, 0, 0), -1)  # Blue for locus points
+
+        # Save the initial frame with the locus overlaid
+        locus_output_path = os.path.join(locus_dir, "initial_frame_with_needle_tip_locus.png")
+        cv2.imwrite(locus_output_path, initial_frame)
+
     cap.release()
     print(f"Processed {frame_count} frames. Output saved to {args.output_dir}")
+    print(f"Locus overlaid on initial frame saved to {locus_output_path}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Infer the trained model on each frame of a video and save the output with predicted coordinates overlaid.')
+    parser = argparse.ArgumentParser(description='Infer the trained model on each frame of a video and save the output with predicted coordinates overlayed.')
     parser.add_argument('--input_video', type=str, required=True, help='Path to the input video file.')
     parser.add_argument('--model_path', type=str, required=True, help='Path to the trained model file.')
     parser.add_argument('--output_dir', type=str, required=True, help='Directory to save the output frames.')
