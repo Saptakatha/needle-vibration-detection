@@ -90,7 +90,8 @@ This script will:
 + Load the trained model.
 + Process each frame of the input video to predict the needle tip and dial center coordinates.
 + Save the processed frames with overlayed predictions to the specified output directory.
-+ Save the locus of the needle tip in all frames overlayed on the initial frame of the video in a separate directory `locus` within the output directory.
++ Save the locus of the needle tip in all frames overlaid on the initial frame of the video in a separate directory `locus` within the output directory.
++ The locus will provide evidence to conclude the presence of needle vibration.
 
 
 ##### Inference on Images
