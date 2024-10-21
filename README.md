@@ -83,7 +83,7 @@ python infer.py --input_video <path_to_input_video> --model_path <path_to_traine
 
 ##### Example usage
 ```python
-python infer.py --input_video ../data/test_video.mp4 --model_path ../models/gauge_model.pth --output_dir ../output_frames
+python infer.py --input_video ../data/test_video.mp4 --model_path ../models/gauge_model.pth --output_dir ../output_data/test_video
 ```
 
 This script will:
